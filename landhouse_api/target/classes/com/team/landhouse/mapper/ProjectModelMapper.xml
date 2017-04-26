@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.team.landhouse.dao.ProjectModelMapper">
+  <resultMap id="ProjectModelResultMap" type="com.team.landhouse.entities.ProjectModel">
+    <id column="ProjectId" jdbcType="INTEGER" property="projectid" />
+    <result column="Code" jdbcType="VARCHAR" property="code" />
+    <result column="Name" jdbcType="VARCHAR" property="name" />
+    <result column="Creator" jdbcType="VARCHAR" property="creator" />
+    <result column="Created" jdbcType="TIMESTAMP" property="created" />
+    <result column="Modifier" jdbcType="VARCHAR" property="modifier" />
+    <result column="Modified" jdbcType="TIMESTAMP" property="modified" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ProjectId, Code, Name, Creator, Created, Modifier, Modified
+  </sql>
+  
+  <select id="getAll" resultMap="ProjectModelResultMap">
+  	SELECT ProjectId, Code, Name, Creator, Created, Modifier, Modified
+  	FROM project
+  </select>
+  
+  <insert id="create" parameterType="com.team.landhouse.entities.ProjectCreateRequestModel">
+  	INSERT INTO project (Code, Name, Creator, Created)
+  		VALUES (#{code, jdbcType=VARCHAR}, #{name, jdbcType=VARCHAR}, #{creator, jdbcType=VARCHAR}, NOW())
+  </insert>
+  
+  <update id="update" parameterType="com.team.landhouse.entities.ProjectUpdateRequestModel">
+  	UPDATE project SET Code = #{code, jdbcType=VARCHAR}, Name = #{name, jdbcType=VARCHAR}, Modifier = #{modifier, jdbcType=VARCHAR}, Modified = NOW()
+  	WHERE ProjectId = #{projectId, jdbcType=INTEGER}
+  </update>
+  
+  <delete id="delete" parameterType="int">
+  	DELETE FROM Project
+  	WHERE ProjectId = #{projectId, jdbcType=INTEGER}
+  </delete>
+  
+  <select id="loadPagination" parameterType="com.team.landhouse.utils.SearchPage" resultMap="ProjectModelResultMap">
+  	SELECT ProjectId, Code, Name, Creator, Created, Modifier, Modified
+  	FROM project
+  	WHERE (ProjectId like CONCAT('%', #{textSearch},'%')
+			OR Code like CONCAT('%', #{textSearch},'%')
+            OR Name like CONCAT('%', #{textSearch},'%')) OR #{textSearch} IS NULL
+  	LIMIT #{pageNumber, jdbcType=INTEGER}, #{pageSize, jdbcType=INTEGER}
+  </select>
+  
+  <select id="getRowPagination" parameterType="com.team.landhouse.utils.SearchPage" resultMap="ProjectModelResultMap">
+  	SELECT ProjectId, Code, Name, Creator, Created, Modifier, Modified
+  	FROM project
+  	WHERE (ProjectId like CONCAT('%', #{textSearch},'%')
+			OR Code like CONCAT('%', #{textSearch},'%')
+            OR Name like CONCAT('%', #{textSearch},'%')) OR #{textSearch} IS NULL
+  </select>
+</mapper>
